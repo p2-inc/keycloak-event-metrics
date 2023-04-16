@@ -6,12 +6,13 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -31,9 +32,6 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.MeterRegistry;
-
 /**
  * Test for {@link MicrometerEventListener} with Mockito.
  *
@@ -42,264 +40,265 @@ import io.micrometer.core.instrument.MeterRegistry;
 @ExtendWith(MockitoExtension.class)
 public class MicrometerEventListenerTest {
 
-	@Mock
-	KeycloakSession session;
-	@Mock
-	RealmModel realmModel;
-	@Mock
-	ClientModel clientModel;
-	@Mock
-	KeycloakContext context;
-	@Mock
-	MeterRegistry registry;
-	@Mock
-	Counter counter;
-	@Captor
-	ArgumentCaptor<String> metricCaptor;
-	@Captor
-	ArgumentCaptor<String[]> tagsCaptor;
+  @Mock KeycloakSession session;
+  @Mock RealmModel realmModel;
+  @Mock ClientModel clientModel;
+  @Mock KeycloakContext context;
+  @Mock MeterRegistry registry;
+  @Mock Counter counter;
+  @Captor ArgumentCaptor<String> metricCaptor;
+  @Captor ArgumentCaptor<String[]> tagsCaptor;
 
-	@BeforeEach
-	void setup() {
-		when(registry.counter(metricCaptor.capture(), tagsCaptor.capture())).thenReturn(counter);
-	}
+  @BeforeEach
+  void setup() {
+    when(registry.counter(metricCaptor.capture(), tagsCaptor.capture())).thenReturn(counter);
+  }
 
-	@DisplayName("onEvent(true)")
-	@Nested
-	class onEvent {
+  @DisplayName("onEvent(true)")
+  @Nested
+  class onEvent {
 
-		@DisplayName("replace(true) - without error")
-		@Test
-		void replaceWithoutError() {
+    @DisplayName("replace(true) - without error")
+    @Test
+    void replaceWithoutError() {
 
-			var realmId = UUID.randomUUID().toString();
-			var realmName = UUID.randomUUID().toString();
-			var clientId = UUID.randomUUID().toString();
-			var clientName = UUID.randomUUID().toString();
-			var type = EventType.LOGIN;
+      var realmId = UUID.randomUUID().toString();
+      var realmName = UUID.randomUUID().toString();
+      var clientId = UUID.randomUUID().toString();
+      var clientName = UUID.randomUUID().toString();
+      var type = EventType.LOGIN;
 
-			when(session.getContext()).thenReturn(context);
-			when(context.getRealm()).thenReturn(realmModel);
-			when(context.getClient()).thenReturn(clientModel);
-			when(realmModel.getId()).thenReturn(realmId);
-			when(realmModel.getName()).thenReturn(realmName);
-			when(clientModel.getId()).thenReturn(clientId);
-			when(clientModel.getClientId()).thenReturn(clientName);
+      when(session.getContext()).thenReturn(context);
+      when(context.getRealm()).thenReturn(realmModel);
+      when(context.getClient()).thenReturn(clientModel);
+      when(realmModel.getId()).thenReturn(realmId);
+      when(realmModel.getName()).thenReturn(realmName);
+      when(clientModel.getId()).thenReturn(clientId);
+      when(clientModel.getClientId()).thenReturn(clientName);
 
-			listener(true).onEvent(toEvent(realmId, clientId, type, null));
-			assertEvent(realmName, clientName, type.toString(), "");
-		}
+      listener(true).onEvent(toEvent(realmId, clientId, type, null));
+      assertEvent(realmName, clientName, type.toString(), "");
+    }
 
-		@DisplayName("replace(true) - with error")
-		@Test
-		void replaceWithError() {
+    @DisplayName("replace(true) - with error")
+    @Test
+    void replaceWithError() {
 
-			var realmId = UUID.randomUUID().toString();
-			var realmName = UUID.randomUUID().toString();
-			var clientId = UUID.randomUUID().toString();
-			var clientName = UUID.randomUUID().toString();
-			var type = EventType.LOGIN_ERROR;
-			var error = UUID.randomUUID().toString();
+      var realmId = UUID.randomUUID().toString();
+      var realmName = UUID.randomUUID().toString();
+      var clientId = UUID.randomUUID().toString();
+      var clientName = UUID.randomUUID().toString();
+      var type = EventType.LOGIN_ERROR;
+      var error = UUID.randomUUID().toString();
 
-			when(session.getContext()).thenReturn(context);
-			when(context.getRealm()).thenReturn(realmModel);
-			when(context.getClient()).thenReturn(clientModel);
-			when(realmModel.getId()).thenReturn(realmId);
-			when(realmModel.getName()).thenReturn(realmName);
-			when(clientModel.getId()).thenReturn(clientId);
-			when(clientModel.getClientId()).thenReturn(clientName);
+      when(session.getContext()).thenReturn(context);
+      when(context.getRealm()).thenReturn(realmModel);
+      when(context.getClient()).thenReturn(clientModel);
+      when(realmModel.getId()).thenReturn(realmId);
+      when(realmModel.getName()).thenReturn(realmName);
+      when(clientModel.getId()).thenReturn(clientId);
+      when(clientModel.getClientId()).thenReturn(clientName);
 
-			listener(true).onEvent(toEvent(realmId, clientId, type, error));
-			assertEvent(realmName, clientName, type.toString(), error);
-		}
+      listener(true).onEvent(toEvent(realmId, clientId, type, error));
+      assertEvent(realmName, clientName, type.toString(), error);
+    }
 
-		@DisplayName("replace(true) - all fields empty")
-		@Test
-		void replaceFieldsEmpty() {
+    @DisplayName("replace(true) - all fields empty")
+    @Test
+    void replaceFieldsEmpty() {
 
-			var realmName = UUID.randomUUID().toString();
-			var clientName = UUID.randomUUID().toString();
+      var realmName = UUID.randomUUID().toString();
+      var clientName = UUID.randomUUID().toString();
 
-			when(session.getContext()).thenReturn(context);
-			when(context.getRealm()).thenReturn(realmModel);
-			when(context.getClient()).thenReturn(clientModel);
-			when(realmModel.getName()).thenReturn(realmName);
-			when(clientModel.getClientId()).thenReturn(clientName);
+      when(session.getContext()).thenReturn(context);
+      when(context.getRealm()).thenReturn(realmModel);
+      when(context.getClient()).thenReturn(clientModel);
+      when(realmModel.getName()).thenReturn(realmName);
+      when(clientModel.getClientId()).thenReturn(clientName);
 
-			listener(true).onEvent(toEvent(null, null, null, null));
-			assertEvent(realmName, clientName, "", "");
-		}
+      listener(true).onEvent(toEvent(null, null, null, null));
+      assertEvent(realmName, clientName, "", "");
+    }
 
-		@DisplayName("replace(false) - without error")
-		@Test
-		void notReplaceWithoutError() {
+    @DisplayName("replace(false) - without error")
+    @Test
+    void notReplaceWithoutError() {
 
-			var realmId = UUID.randomUUID().toString();
-			var clientId = UUID.randomUUID().toString();
-			var type = EventType.LOGIN;
+      var realmId = UUID.randomUUID().toString();
+      var clientId = UUID.randomUUID().toString();
+      var type = EventType.LOGIN;
 
-			listener(false).onEvent(toEvent(realmId, clientId, type, null));
-			assertEvent(realmId, clientId, type.toString(), "");
-		}
+      listener(false).onEvent(toEvent(realmId, clientId, type, null));
+      assertEvent(realmId, clientId, type.toString(), "");
+    }
 
-		@DisplayName("replace(false) - with error")
-		@Test
-		void notReplaceWithError() {
+    @DisplayName("replace(false) - with error")
+    @Test
+    void notReplaceWithError() {
 
-			var realmId = UUID.randomUUID().toString();
-			var clientId = UUID.randomUUID().toString();
-			var type = EventType.LOGIN_ERROR;
-			var error = UUID.randomUUID().toString();
+      var realmId = UUID.randomUUID().toString();
+      var clientId = UUID.randomUUID().toString();
+      var type = EventType.LOGIN_ERROR;
+      var error = UUID.randomUUID().toString();
 
-			listener(false).onEvent(toEvent(realmId, clientId, type, error));
-			assertEvent(realmId, clientId, type.toString(), error);
-		}
+      listener(false).onEvent(toEvent(realmId, clientId, type, error));
+      assertEvent(realmId, clientId, type.toString(), error);
+    }
 
-		@DisplayName("replace(false) - all fields empty")
-		@Test
-		void notReplaceFieldsEmpty() {
-			listener(false).onEvent(toEvent(null, null, null, null));
-			assertEvent("", "", "", "");
-		}
+    @DisplayName("replace(false) - all fields empty")
+    @Test
+    void notReplaceFieldsEmpty() {
+      listener(false).onEvent(toEvent(null, null, null, null));
+      assertEvent("", "", "", "");
+    }
 
-		private Event toEvent(String realmId, String clientId, EventType type, String error) {
-			var event = new Event();
-			event.setRealmId(realmId);
-			event.setClientId(clientId);
-			event.setType(type);
-			event.setError(error);
-			return event;
-		}
+    private Event toEvent(String realmId, String clientId, EventType type, String error) {
+      var event = new Event();
+      event.setRealmId(realmId);
+      event.setClientId(clientId);
+      event.setType(type);
+      event.setError(error);
+      return event;
+    }
 
-		private void assertEvent(String realm, String client, String type, String error) {
-			assertCounter("keycloak_event_user", Map.of(
-					"realm", realm,
-					"client", client,
-					"type", type,
-					"error", error));
-		}
-	}
+    private void assertEvent(String realm, String client, String type, String error) {
+      assertCounter(
+          "keycloak_event_user",
+          Map.of(
+              "realm", realm,
+              "client", client,
+              "type", type,
+              "error", error));
+    }
+  }
 
-	@DisplayName("onEvent(AdminEvent,boolean)")
-	@Nested
-	class onAdminEvent {
+  @DisplayName("onEvent(AdminEvent,boolean)")
+  @Nested
+  class onAdminEvent {
 
-		@DisplayName("replace(true) - without error")
-		@Test
-		void replaceWithoutError() {
+    @DisplayName("replace(true) - without error")
+    @Test
+    void replaceWithoutError() {
 
-			var realmId = UUID.randomUUID().toString();
-			var realmName = UUID.randomUUID().toString();
-			var resource = ResourceType.USER;
-			var operation = OperationType.CREATE;
+      var realmId = UUID.randomUUID().toString();
+      var realmName = UUID.randomUUID().toString();
+      var resource = ResourceType.USER;
+      var operation = OperationType.CREATE;
 
-			when(session.getContext()).thenReturn(context);
-			when(context.getRealm()).thenReturn(realmModel);
-			when(realmModel.getId()).thenReturn(realmId);
-			when(realmModel.getName()).thenReturn(realmName);
+      when(session.getContext()).thenReturn(context);
+      when(context.getRealm()).thenReturn(realmModel);
+      when(realmModel.getId()).thenReturn(realmId);
+      when(realmModel.getName()).thenReturn(realmName);
 
-			listener(true).onEvent(toAdminEvent(realmId, resource, operation, null), false);
-			assertAdminEvent(realmName, resource.toString(), operation.toString(), "");
-		}
+      listener(true).onEvent(toAdminEvent(realmId, resource, operation, null), false);
+      assertAdminEvent(realmName, resource.toString(), operation.toString(), "");
+    }
 
-		@DisplayName("replace(true) - with error")
-		@Test
-		void replaceWithError() {
+    @DisplayName("replace(true) - with error")
+    @Test
+    void replaceWithError() {
 
-			var realmId = UUID.randomUUID().toString();
-			var realmName = UUID.randomUUID().toString();
-			var resource = ResourceType.USER;
-			var operation = OperationType.CREATE;
-			var error = UUID.randomUUID().toString();
+      var realmId = UUID.randomUUID().toString();
+      var realmName = UUID.randomUUID().toString();
+      var resource = ResourceType.USER;
+      var operation = OperationType.CREATE;
+      var error = UUID.randomUUID().toString();
 
-			when(session.getContext()).thenReturn(context);
-			when(context.getRealm()).thenReturn(realmModel);
-			when(realmModel.getId()).thenReturn(realmId);
-			when(realmModel.getName()).thenReturn(realmName);
+      when(session.getContext()).thenReturn(context);
+      when(context.getRealm()).thenReturn(realmModel);
+      when(realmModel.getId()).thenReturn(realmId);
+      when(realmModel.getName()).thenReturn(realmName);
 
-			listener(true).onEvent(toAdminEvent(realmId, resource, operation, error), false);
-			assertAdminEvent(realmName, resource.toString(), operation.toString(), error);
-		}
+      listener(true).onEvent(toAdminEvent(realmId, resource, operation, error), false);
+      assertAdminEvent(realmName, resource.toString(), operation.toString(), error);
+    }
 
-		@DisplayName("replace(true) - all fields empty")
-		@Test
-		void replaceFieldsEmpty() {
+    @DisplayName("replace(true) - all fields empty")
+    @Test
+    void replaceFieldsEmpty() {
 
-			var realmName = UUID.randomUUID().toString();
+      var realmName = UUID.randomUUID().toString();
 
-			when(session.getContext()).thenReturn(context);
-			when(context.getRealm()).thenReturn(realmModel);
-			when(realmModel.getName()).thenReturn(realmName);
+      when(session.getContext()).thenReturn(context);
+      when(context.getRealm()).thenReturn(realmModel);
+      when(realmModel.getName()).thenReturn(realmName);
 
-			listener(true).onEvent(toAdminEvent(null, null, null, null), false);
-			assertAdminEvent(realmName, "", "", "");
-		}
+      listener(true).onEvent(toAdminEvent(null, null, null, null), false);
+      assertAdminEvent(realmName, "", "", "");
+    }
 
-		@DisplayName("replace(false) - without error")
-		@Test
-		void noReplaceWithoutError() {
+    @DisplayName("replace(false) - without error")
+    @Test
+    void noReplaceWithoutError() {
 
-			var realmId = UUID.randomUUID().toString();
-			var resource = ResourceType.USER;
-			var operation = OperationType.CREATE;
+      var realmId = UUID.randomUUID().toString();
+      var resource = ResourceType.USER;
+      var operation = OperationType.CREATE;
 
-			listener(false).onEvent(toAdminEvent(realmId, resource, operation, null), false);
-			assertAdminEvent(realmId, resource.toString(), operation.toString(), "");
-		}
+      listener(false).onEvent(toAdminEvent(realmId, resource, operation, null), false);
+      assertAdminEvent(realmId, resource.toString(), operation.toString(), "");
+    }
 
-		@DisplayName("replace(false) - with error")
-		@Test
-		void noReplaceWithError() {
+    @DisplayName("replace(false) - with error")
+    @Test
+    void noReplaceWithError() {
 
-			var realmId = UUID.randomUUID().toString();
-			var resource = ResourceType.USER;
-			var operation = OperationType.CREATE;
-			var error = UUID.randomUUID().toString();
+      var realmId = UUID.randomUUID().toString();
+      var resource = ResourceType.USER;
+      var operation = OperationType.CREATE;
+      var error = UUID.randomUUID().toString();
 
-			listener(false).onEvent(toAdminEvent(realmId, resource, operation, error), false);
-			assertAdminEvent(realmId, resource.toString(), operation.toString(), error);
-		}
+      listener(false).onEvent(toAdminEvent(realmId, resource, operation, error), false);
+      assertAdminEvent(realmId, resource.toString(), operation.toString(), error);
+    }
 
-		@DisplayName("replace(false) - all fields empty")
-		@Test
-		void noReplaceFieldsEmpty() {
-			listener(false).onEvent(toAdminEvent(null, null, null, null), false);
-			assertAdminEvent("", "", "", "");
-		}
+    @DisplayName("replace(false) - all fields empty")
+    @Test
+    void noReplaceFieldsEmpty() {
+      listener(false).onEvent(toAdminEvent(null, null, null, null), false);
+      assertAdminEvent("", "", "", "");
+    }
 
-		private AdminEvent toAdminEvent(String realmId, ResourceType resource, OperationType operation, String error) {
-			var event = new AdminEvent();
-			event.setRealmId(realmId);
-			event.setResourceType(resource);
-			event.setOperationType(operation);
-			event.setError(error);
-			return event;
-		}
+    private AdminEvent toAdminEvent(
+        String realmId, ResourceType resource, OperationType operation, String error) {
+      var event = new AdminEvent();
+      event.setRealmId(realmId);
+      event.setResourceType(resource);
+      event.setOperationType(operation);
+      event.setError(error);
+      return event;
+    }
 
-		private void assertAdminEvent(String realm, String resource, String operation, String error) {
-			assertCounter("keycloak_event_admin", Map.of(
-					"realm", realm,
-					"resource", resource,
-					"operation", operation,
-					"error", error));
-		}
-	}
+    private void assertAdminEvent(String realm, String resource, String operation, String error) {
+      assertCounter(
+          "keycloak_event_admin",
+          Map.of(
+              "realm", realm,
+              "resource", resource,
+              "operation", operation,
+              "error", error));
+    }
+  }
 
-	private MicrometerEventListener listener(boolean replace) {
-		return new MicrometerEventListener(registry, session, replace);
-	}
+  private MicrometerEventListener listener(boolean replace) {
+    return new MicrometerEventListener(
+        registry, session, new MicrometerEventConfig(false, true, 60l));
+  }
 
-	private void assertCounter(String metric, Map<String, String> tags) {
-		verify(registry).counter(anyString(), any(String[].class));
-		verify(counter).increment();
-		assertEquals(metric, metricCaptor.getValue(), "metric");
-		var expectedTags = new TreeMap<>(tags);
-		var actualTags = IntStream
-				.range(0, tagsCaptor.getValue().length / 2).mapToObj(i -> i * 2)
-				.collect(Collectors.toMap(
-						i -> tagsCaptor.getValue()[i],
-						i -> tagsCaptor.getValue()[i + 1],
-						(i, j) -> i, TreeMap::new));
-		assertEquals(expectedTags, actualTags, "tags");
-	}
+  private void assertCounter(String metric, Map<String, String> tags) {
+    verify(registry).counter(anyString(), any(String[].class));
+    verify(counter).increment();
+    assertEquals(metric, metricCaptor.getValue(), "metric");
+    var expectedTags = new TreeMap<>(tags);
+    var actualTags =
+        IntStream.range(0, tagsCaptor.getValue().length / 2)
+            .mapToObj(i -> i * 2)
+            .collect(
+                Collectors.toMap(
+                    i -> tagsCaptor.getValue()[i],
+                    i -> tagsCaptor.getValue()[i + 1],
+                    (i, j) -> i,
+                    TreeMap::new));
+    assertEquals(expectedTags, actualTags, "tags");
+  }
 }

@@ -1,12 +1,13 @@
 package io.kokuwa.keycloak.metrics;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import org.jboss.logging.Logger;
 import org.keycloak.events.Event;
 import org.keycloak.events.EventListenerProvider;
 import org.keycloak.events.admin.AdminEvent;
+import org.keycloak.models.ClientModel;
 import org.keycloak.models.KeycloakSession;
-
-import io.micrometer.core.instrument.MeterRegistry;
+import org.keycloak.models.RealmModel;
 
 /**
  * Listener for {@link Event} and {@link AdminEvent}.
@@ -15,59 +16,72 @@ import io.micrometer.core.instrument.MeterRegistry;
  */
 public class MicrometerEventListener implements EventListenerProvider, AutoCloseable {
 
-	private static final Logger log = Logger.getLogger(MicrometerEventListener.class);
-	private final MeterRegistry registry;
-	private final KeycloakSession session;
-	private final MicrometerEventConfig config;
+  private static final Logger log = Logger.getLogger(MicrometerEventListener.class);
+  private final MeterRegistry registry;
+  private final KeycloakSession session;
+  private final MicrometerEventConfig config;
 
-	public MicrometerEventListener(MeterRegistry registry, KeycloakSession session, MicrometerEventConfig config) {
-		this.registry = registry;
-		this.session = session;
-		this.config = config;
-	}
+  public MicrometerEventListener(
+      MeterRegistry registry, KeycloakSession session, MicrometerEventConfig config) {
+    this.registry = registry;
+    this.session = session;
+    this.config = config;
+  }
 
-	@Override
-	public void onEvent(Event event) {
-		registry.counter("keycloak_event_user",
-				"realm", toBlank(config.replaceIds() ? getRealmName(event.getRealmId()) : event.getRealmId()),
-				"type", toBlank(event.getType()),
-				"client", toBlank(config.replaceIds() ? getClientId(event.getClientId()) : event.getClientId()),
-				"error", toBlank(event.getError()))
-				.increment();
-	}
+  @Override
+  public void onEvent(Event event) {
+    registry
+        .counter(
+            "keycloak_event_user",
+            "realm",
+            toBlank(config.replaceIds() ? getRealmName(event.getRealmId()) : event.getRealmId()),
+            "type",
+            toBlank(event.getType()),
+            "client",
+            toBlank(config.replaceIds() ? getClientId(event.getClientId()) : event.getClientId()),
+            "error",
+            toBlank(event.getError()))
+        .increment();
+  }
 
-	@Override
-	public void onEvent(AdminEvent event, boolean includeRepresentation) {
-		registry.counter("keycloak_event_admin",
-				"realm", toBlank(config.replaceIds() ? getRealmName(event.getRealmId()) : event.getRealmId()),
-				"resource", toBlank(event.getResourceType()),
-				"operation", toBlank(event.getOperationType()),
-				"error", toBlank(event.getError()))
-				.increment();
-	}
+  @Override
+  public void onEvent(AdminEvent event, boolean includeRepresentation) {
+    registry
+        .counter(
+            "keycloak_event_admin",
+            "realm",
+            toBlank(config.replaceIds() ? getRealmName(event.getRealmId()) : event.getRealmId()),
+            "resource",
+            toBlank(event.getResourceType()),
+            "operation",
+            toBlank(event.getOperationType()),
+            "error",
+            toBlank(event.getError()))
+        .increment();
+  }
 
-	@Override
-	public void close() {}
+  @Override
+  public void close() {}
 
-	private String getRealmName(String id) {
-		var model = session.getContext().getRealm();
-		if (id == null || id.equals(model.getId())) {
-			return model.getName();
-		}
-		log.warnv("Failed to resolve realmName for id {0}", id);
-		return id;
-	}
+  private String getRealmName(String id) {
+    RealmModel model = session.getContext().getRealm();
+    if (id == null || id.equals(model.getId())) {
+      return model.getName();
+    }
+    log.warnv("Failed to resolve realmName for id {0}", id);
+    return id;
+  }
 
-	private String getClientId(String id) {
-		var model = session.getContext().getClient();
-		if (id == null || id.equals(model.getId())) {
-			return model.getClientId();
-		}
-		log.warnv("Failed to resolve clientId for id {0}", id);
-		return id;
-	}
+  private String getClientId(String id) {
+    ClientModel model = session.getContext().getClient();
+    if (id == null || id.equals(model.getId())) {
+      return model.getClientId();
+    }
+    log.warnv("Failed to resolve clientId for id {0}", id);
+    return id;
+  }
 
-	private String toBlank(Object value) {
-		return value == null ? "" : value.toString();
-	}
+  private String toBlank(Object value) {
+    return value == null ? "" : value.toString();
+  }
 }

@@ -12,8 +12,8 @@ import javax.ws.rs.core.MediaType;
  */
 public interface PrometheusClient {
 
-	@GET
-	@Path("/metrics")
-	@Consumes(MediaType.TEXT_PLAIN)
-	String scrap();
+  @GET
+  @Path("/metrics")
+  @Consumes(MediaType.TEXT_PLAIN)
+  String scrap();
 }
