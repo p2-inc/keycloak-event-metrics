@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0.0
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HTTP_RELATIVE_PATH: /auth
+      KC_HEALTH_ENABLED: 'true'
+      KC_METRICS_ENABLED: 'true'
+      KC_COMMUNITY_EVENTS_METRICS_ENABLED: 'true'
+      JAVA_OPTS: '-agentlib:jdwp=transport=dt_socket,address=*:8787,server=y,suspend=n'
+    ports:
+      - 8080:8080
+      - 8787:8787
+    volumes:
+      - ./target/keycloak-event-metrics-1.0.1-SNAPSHOT.jar:/opt/keycloak/providers/keycloak-event-metrics.jar
+    command: [ "start-dev" ]

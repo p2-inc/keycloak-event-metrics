@@ -2,16 +2,19 @@ package io.kokuwa.keycloak.metrics.event;
 
 import java.util.Optional;
 
+
 import org.jboss.logging.Logger;
+import org.keycloak.Config;
 import org.keycloak.events.Event;
 import org.keycloak.events.EventListenerProvider;
 import org.keycloak.events.admin.AdminEvent;
 import org.keycloak.models.KeycloakContext;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
+import org.keycloak.provider.EnvironmentDependentProviderFactory;
 
 import io.micrometer.core.instrument.Metrics;
-
+import io.kokuwa.keycloak.metrics.CommunityProfiles;
 /**
  * Listener for {@link Event} and {@link AdminEvent}.
  *
@@ -68,4 +71,5 @@ public class MetricsEventListener implements EventListenerProvider, AutoCloseabl
 	private String toBlank(Object value) {
 		return value == null ? "" : value.toString();
 	}
+
 }
