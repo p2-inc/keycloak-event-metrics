@@ -19,10 +19,11 @@ public class MetricsEventListenerFactory implements EventListenerProviderFactory
 
     private static final Logger log = Logger.getLogger(MetricsEventListenerFactory.class);
     private boolean replaceIds;
+    public static final String ID = "metrics-listener";
 
     @Override
     public String getId() {
-        return "metrics-listener";
+        return ID;
     }
 
     @Override
@@ -44,15 +45,19 @@ public class MetricsEventListenerFactory implements EventListenerProviderFactory
     public void close() {
     }
 
+
+    //to avoid double metric registration
     @Override
     public boolean isSupported() {
-        log.info("MetricsEventListenerFactory is supported:" + !CommunityProfiles.isEventsMetricsEnabled());
-        return !CommunityProfiles.isEventsMetricsEnabled();
+        var defaultEventsMetricsDisabled = !CommunityProfiles.isEventsMetricsEnabled();
+        log.info("MetricsEventListenerFactory is enabled:" + defaultEventsMetricsDisabled);
+        return defaultEventsMetricsDisabled;
     }
 
     @Override
     public boolean isSupported(Config.Scope config) {
-        log.info("MetricsEventListenerFactory is supported:" + !CommunityProfiles.isEventsMetricsEnabled());
-        return !CommunityProfiles.isEventsMetricsEnabled();
+        var defaultEventsMetricsDisabled = !CommunityProfiles.isEventsMetricsEnabled();
+        log.info("MetricsEventListenerFactory is enabled:" + defaultEventsMetricsDisabled);
+        return defaultEventsMetricsDisabled;
     }
 }
