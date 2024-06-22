@@ -7,9 +7,11 @@ import org.jboss.logging.Logger;
 import org.keycloak.events.Event;
 import org.keycloak.events.admin.AdminEvent;
 import org.keycloak.events.jpa.JpaEventStoreProvider;
+import org.keycloak.models.AbstractKeycloakTransaction;
 import org.keycloak.models.KeycloakContext;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
+import org.keycloak.models.utils.KeycloakModelUtils;
 
 import java.util.Optional;
 
@@ -29,30 +31,20 @@ public class MicrometerEventStoreProvider extends JpaEventStoreProvider {
 
     @Override
     public void onEvent(Event event) {
-        var isEventsEnable = CommunityProfiles.isEventsMetricsEnabled();
-        if (isEventsEnable) {
-            Metrics.counter("keycloak_event_user",
-                            "realm", toBlank(replaceIds ? getRealmName(event.getRealmId()) : event.getRealmId()),
-                            "type", toBlank(event.getType()),
-                            "client", toBlank(event.getClientId()),
-                            "error", toBlank(event.getError()))
-                    .increment();
-        }
         super.onEvent(event);
+        var isEventsMetricsEnabled = CommunityProfiles.isEventsMetricsEnabled();
+        if (isEventsMetricsEnabled) {
+            addEvent(event);
+        }
     }
 
     @Override
     public void onEvent(AdminEvent event, boolean includeRepresentation) {
-        var isEventsEnable = CommunityProfiles.isEventsMetricsEnabled();
-        if (isEventsEnable) {
-            Metrics.counter("keycloak_event_admin",
-                            "realm", toBlank(replaceIds ? getRealmName(event.getRealmId()) : event.getRealmId()),
-                            "resource", toBlank(event.getResourceType()),
-                            "operation", toBlank(event.getOperationType()),
-                            "error", toBlank(event.getError()))
-                    .increment();
-        }
         super.onEvent(event, includeRepresentation);
+        var isEventsMetricsEnabled = CommunityProfiles.isEventsMetricsEnabled();
+        if (isEventsMetricsEnabled) {
+            addAdminEvent(event);
+        }
     }
 
     @Override
@@ -75,5 +67,55 @@ public class MicrometerEventStoreProvider extends JpaEventStoreProvider {
 
     private String toBlank(Object value) {
         return value == null ? "" : value.toString();
+    }
+
+    void addEvent(Event event) {
+        session
+                .getTransactionManager()
+                .enlistAfterCompletion(
+                        new AbstractKeycloakTransaction() {
+                            @Override
+                            protected void commitImpl() {
+                                KeycloakModelUtils.runJobInTransaction(
+                                        session.getKeycloakSessionFactory(),
+                                        (s) -> {
+                                            Metrics.counter("keycloak_event_user",
+                                                            "realm", toBlank(replaceIds ? getRealmName(event.getRealmId()) : event.getRealmId()),
+                                                            "type", toBlank(event.getType()),
+                                                            "client", toBlank(event.getClientId()),
+                                                            "error", toBlank(event.getError()))
+                                                    .increment();
+                                        });
+                            }
+
+                            @Override
+                            protected void rollbackImpl() {
+                            }
+                        });
+    }
+
+    void addAdminEvent(AdminEvent event) {
+        session
+                .getTransactionManager()
+                .enlistAfterCompletion(
+                        new AbstractKeycloakTransaction() {
+                            @Override
+                            protected void commitImpl() {
+                                KeycloakModelUtils.runJobInTransaction(
+                                        session.getKeycloakSessionFactory(),
+                                        (s) -> {
+                                            Metrics.counter("keycloak_event_admin",
+                                                            "realm", toBlank(replaceIds ? getRealmName(event.getRealmId()) : event.getRealmId()),
+                                                            "resource", toBlank(event.getResourceType()),
+                                                            "operation", toBlank(event.getOperationType()),
+                                                            "error", toBlank(event.getError()))
+                                                    .increment();
+                                        });
+                            }
+
+                            @Override
+                            protected void rollbackImpl() {
+                            }
+                        });
     }
 }
