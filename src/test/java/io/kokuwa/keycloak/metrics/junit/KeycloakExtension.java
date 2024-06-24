@@ -58,6 +58,7 @@ public class KeycloakExtension implements BeforeAllCallback, ParameterResolver {
 				.withEnv("KC_LOG_LEVEL", "io.kokuwa:trace")
 				.withEnv("KC_HEALTH_ENABLED", "true")
 				.withEnv("KC_METRICS_ENABLED", "true")
+				.withEnv("KC_COMMUNITY_EVENTS_METRICS_ENABLED", "true")
 				.withEnv("KC_METRICS_STATS_ENABLED", "true")
 				.withEnv("KC_METRICS_STATS_INTERVAL", "PT1s")
 				.withCopyFileToContainer(MountableFile.forHostPath(jar), "/opt/keycloak/providers/metrics.jar")

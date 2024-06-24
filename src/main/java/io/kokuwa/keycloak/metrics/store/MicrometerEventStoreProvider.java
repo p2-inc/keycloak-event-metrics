@@ -1,6 +1,5 @@
 package io.kokuwa.keycloak.metrics.store;
 
-import io.kokuwa.keycloak.metrics.CommunityProfiles;
 import io.micrometer.core.instrument.Metrics;
 import jakarta.persistence.EntityManager;
 import org.jboss.logging.Logger;
@@ -20,30 +19,32 @@ public class MicrometerEventStoreProvider extends JpaEventStoreProvider {
 
     private final boolean replaceIds;
     private final KeycloakSession session;
+    private final boolean isEventsMetricsEnabled;
 
     public MicrometerEventStoreProvider(KeycloakSession session,
                                         EntityManager em,
-                                        boolean replaceIds) {
+                                        boolean replaceIds, 
+                                        boolean isEventsMetricsEnabled) {
         super(session, em);
         this.replaceIds = replaceIds;
         this.session = session;
+        this.isEventsMetricsEnabled = isEventsMetricsEnabled;
     }
 
     @Override
     public void onEvent(Event event) {
         super.onEvent(event);
-        var isEventsMetricsEnabled = CommunityProfiles.isEventsMetricsEnabled();
         if (isEventsMetricsEnabled) {
-            addEvent(event);
+            log.info("User Event registered ");
+            countUserEvent(event);
         }
     }
 
     @Override
     public void onEvent(AdminEvent event, boolean includeRepresentation) {
         super.onEvent(event, includeRepresentation);
-        var isEventsMetricsEnabled = CommunityProfiles.isEventsMetricsEnabled();
         if (isEventsMetricsEnabled) {
-            addAdminEvent(event);
+            countAdminEvent(event);
         }
     }
 
@@ -69,7 +70,7 @@ public class MicrometerEventStoreProvider extends JpaEventStoreProvider {
         return value == null ? "" : value.toString();
     }
 
-    void addEvent(Event event) {
+    void countUserEvent(Event event) {
         session
                 .getTransactionManager()
                 .enlistAfterCompletion(
@@ -94,7 +95,7 @@ public class MicrometerEventStoreProvider extends JpaEventStoreProvider {
                         });
     }
 
-    void addAdminEvent(AdminEvent event) {
+    void countAdminEvent(AdminEvent event) {
         session
                 .getTransactionManager()
                 .enlistAfterCompletion(
