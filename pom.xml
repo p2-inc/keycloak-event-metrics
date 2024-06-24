@@ -2,13 +2,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>io.kokuwa.maven</groupId>
-		<artifactId>maven-parent</artifactId>
-		<version>0.6.15</version>
-		<relativePath/>
-	</parent>
-
 	<groupId>io.kokuwa.keycloak</groupId>
 	<artifactId>keycloak-event-metrics</artifactId>
 	<version>1.0.1-SNAPSHOT</version>
@@ -68,7 +61,7 @@
 		<!-- ===================================================================== -->
 		<!-- ============================== Libaries ============================= -->
 		<!-- ===================================================================== -->
-
+		<java.version>17</java.version>
 		<version.org.keycloak>24.0.5</version.org.keycloak>
 		<version.org.keycloak.test>${version.org.keycloak}</version.org.keycloak.test>
 		<version.org.testcontainers>1.18.3</version.org.testcontainers>
@@ -104,6 +97,10 @@
 			<groupId>org.keycloak</groupId>
 			<artifactId>keycloak-server-spi-private</artifactId>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.keycloak</groupId>
+			<artifactId>keycloak-model-jpa</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.keycloak</groupId>

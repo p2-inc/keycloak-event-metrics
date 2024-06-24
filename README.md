@@ -10,7 +10,7 @@ Provides metrics for Keycloak user/admin events and user/client/session count. T
 
 [aerogear/keycloak-metrics-spi](https://github.com/aerogear/keycloak-metrics-spi) is an alternative to this plugin but is not well maintained. This implementation is different:
 
-* no Prometheus push (event listener only adds counter to Micrometer)
+* no Prometheus push (event store custom implementation only adds counter to Micrometer)
 * no realm specific Prometheus endpoint, only `/metrics` (from Quarkus)
 * no jvm/http metrics, this is [already](https://www.keycloak.org/server/configuration-metrics#_available_metrics) included in Keycloak
 * different metric names, can relace model ids with name (see [configuration](#kc_metrics_event_replace_ids))
@@ -55,6 +55,10 @@ keycloak_event_admin_total{error="",operation="CREATE",realm="9039a0b5-e8c9-437a
 ```
 
 ## Configuration
+
+### `KC_COMMUNITY_EVENTS_METRICS_ENABLED`
+
+Set to `true` (the default false) than the events metrics gets counted using micrometer
 
 ### `KC_METRICS_EVENT_REPLACE_IDS`
 

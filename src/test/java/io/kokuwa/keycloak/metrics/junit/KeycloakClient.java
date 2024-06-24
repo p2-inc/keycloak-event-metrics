@@ -55,7 +55,8 @@ public class KeycloakClient {
 		realm.setId(UUID.randomUUID().toString());
 		realm.setEnabled(true);
 		realm.setRealm(realmName);
-		realm.setEventsListeners(List.of("metrics-listener"));
+		realm.setEventsEnabled(true);
+		realm.setAdminEventsEnabled(true);
 		keycloak.realms().create(realm);
 	}
 
