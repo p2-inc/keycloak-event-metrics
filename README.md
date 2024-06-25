@@ -1,3 +1,7 @@
+> :rocket: **Try it for free** in the new Phase Two [keycloak managed service](https://phasetwo.io/?utm_source=github&utm_medium=readme&utm_campaign=keycloak-event-metrics). Go to [Phase Two](https://phasetwo.io/) for more information.
+
+> :warning: This is [Phase Two](https://phasetwo.io)'s fork of [kokuwaio/keycloak-event-metrics](https://github.com/kokuwaio/keycloak-event-metrics). It does not work in the same way. Please report issues to the main repo, or [here](https://github.com/p2-inc/phasetwo-containers/issues) if you are using it in the context of the Phase Two docker image.
+
 # Keycloak Metrics
 
 Provides metrics for Keycloak user/admin events and user/client/session count. Tested on Keycloak [21-24](.github/workflows/pr.yaml#L50-L54).
