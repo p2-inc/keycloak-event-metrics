@@ -2,13 +2,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>io.kokuwa.keycloak</groupId>
-	<artifactId>keycloak-event-metrics</artifactId>
-	<version>1.0.1-SNAPSHOT</version>
+  <groupId>io.phasetwo.keycloak</groupId>
+  <artifactId>keycloak-event-metrics</artifactId>
+  <version>0.1-SNAPSHOT</version>
+  <parent>
+    <groupId>com.github.xgp</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>0.7</version>
+  </parent>
 
 	<name>Keycloak Metrics</name>
 	<description>Provides metrics for Keycloak user/admin events</description>
-	<url>https://github.com/kokuwaio/keycloak-event-metrics</url>
+	<url>https://github.com/p2-inc/keycloak-event-metrics</url>
 	<inceptionYear>2023</inceptionYear>
 	<organization>
 		<name>Kokuwa.io</name>
@@ -35,18 +40,18 @@
 	</developers>
 
 	<scm>
-		<url>https://github.com/kokuwaio/keycloak-event-metrics</url>
-		<connection>scm:git:https://github.com/kokuwaio/keycloak-event-metrics.git</connection>
-		<developerConnection>scm:git:https://github.com/kokuwaio/keycloak-event-metrics.git</developerConnection>
+		<url>https://github.com/p2-inc/keycloak-event-metrics</url>
+		<connection>scm:git:https://github.com/p2-inc/keycloak-event-metrics.git</connection>
+		<developerConnection>scm:git:https://github.com/p2-inc/keycloak-event-metrics.git</developerConnection>
 		<tag>HEAD</tag>
 	</scm>
 	<issueManagement>
 		<system>github</system>
-		<url>https://github.com/kokuwaio/keycloak-event-metrics/issues</url>
+		<url>https://github.com/p2-inc/keycloak-event-metrics/issues</url>
 	</issueManagement>
 	<ciManagement>
 		<system>github</system>
-		<url>https://github.com/kokuwaio/keycloak-event-metrics/actions</url>
+		<url>https://github.com/p2-inc/keycloak-event-metrics/actions</url>
 	</ciManagement>
 
 	<properties>
