@@ -4,7 +4,7 @@
 
   <groupId>io.phasetwo.keycloak</groupId>
   <artifactId>keycloak-event-metrics</artifactId>
-  <version>0.1-SNAPSHOT</version>
+  <version>0.1</version>
   <parent>
     <groupId>com.github.xgp</groupId>
     <artifactId>oss-parent</artifactId>
@@ -44,7 +44,7 @@
   <scm>
     <url>https://github.com/p2-inc/keycloak-event-metrics</url>
     <connection>scm:git:git@github.com:p2-inc/keycloak-event-metrics.git</connection>
-    <tag>HEAD</tag>
+    <tag>v0.1</tag>
   </scm>
 
   <!-- keep below merged -->
