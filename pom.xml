@@ -40,10 +40,9 @@
 	</developers>
 
 	<scm>
-		<url>https://github.com/p2-inc/keycloak-event-metrics</url>
-		<connection>scm:git:https://github.com/p2-inc/keycloak-event-metrics.git</connection>
-		<developerConnection>scm:git:https://github.com/p2-inc/keycloak-event-metrics.git</developerConnection>
-		<tag>HEAD</tag>
+	  <url>https://github.com/p2-inc/keycloak-event-metrics</url>
+	  <connection>scm:git:git@github.com:p2-inc/keycloak-event-metrics.git</connection>
+	  <tag>HEAD</tag>
 	</scm>
 	<issueManagement>
 		<system>github</system>
@@ -60,16 +59,16 @@
 		<!-- =============================== Build =============================== -->
 		<!-- ===================================================================== -->
 
-		<maven.compiler.source>17</maven.compiler.source>
-		<maven.compiler.target>17</maven.compiler.target>
+		<maven.compiler.source>21</maven.compiler.source>
+		<maven.compiler.target>21</maven.compiler.target>
 
 		<!-- ===================================================================== -->
 		<!-- ============================== Libaries ============================= -->
 		<!-- ===================================================================== -->
-		<java.version>17</java.version>
-		<version.org.keycloak>24.0.5</version.org.keycloak>
+		<java.version>21</java.version>
+		<version.org.keycloak>25.0.1</version.org.keycloak>
 		<version.org.keycloak.test>${version.org.keycloak}</version.org.keycloak.test>
-		<version.org.testcontainers>1.18.3</version.org.testcontainers>
+		<version.org.testcontainers>1.19.3</version.org.testcontainers>
 
 	</properties>
 
@@ -128,6 +127,11 @@
 			<groupId>org.jboss.logging</groupId>
 			<artifactId>jboss-logging</artifactId>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.logging</groupId>
+			<artifactId>commons-logging-jboss-logging</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate.orm</groupId>
