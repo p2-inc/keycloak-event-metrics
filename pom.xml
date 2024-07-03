@@ -4,7 +4,7 @@
 
   <groupId>io.phasetwo.keycloak</groupId>
   <artifactId>keycloak-event-metrics</artifactId>
-  <version>0.1-SNAPSHOT</version>
+  <version>0.2-SNAPSHOT</version>
   <parent>
     <groupId>com.github.xgp</groupId>
     <artifactId>oss-parent</artifactId>
@@ -211,7 +211,7 @@
 				<executions>
 					<execution>
 						<id>default</id>
-						<phase/>
+						<phase />
 					</execution>
 				</executions>
 			</plugin>
