@@ -11,49 +11,46 @@
     <version>0.7</version>
   </parent>
 
-	<name>Keycloak Metrics</name>
-	<description>Provides metrics for Keycloak user/admin events</description>
-	<url>https://github.com/p2-inc/keycloak-event-metrics</url>
-	<inceptionYear>2023</inceptionYear>
-	<organization>
-		<name>Kokuwa.io</name>
-		<url>http://kokuwa.io</url>
-	</organization>
-	<licenses>
-		<license>
-			<name>Apache-2.0</name>
-			<url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
+  <name>Keycloak Metrics</name>
+  <description>Provides metrics for Keycloak user/admin events</description>
+  <url>https://github.com/p2-inc/keycloak-event-metrics</url>
 
-	<developers>
-		<developer>
-			<id>sschnabe</id>
-			<name>Stephan Schnabel</name>
-			<url>https://github.com/sschnabe</url>
-			<email>stephan@grayc.de</email>
-			<organization>GrayC GmbH</organization>
-			<organizationUrl>https://grayc.de</organizationUrl>
-			<timezone>Europe/Berlin</timezone>
-		</developer>
-	</developers>
+  <licenses>
+    <license>
+      <name>Apache-2.0</name>
+      <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
 
-	<scm>
-	  <url>https://github.com/p2-inc/keycloak-event-metrics</url>
-	  <connection>scm:git:git@github.com:p2-inc/keycloak-event-metrics.git</connection>
-	  <tag>HEAD</tag>
-	</scm>
-	<issueManagement>
-		<system>github</system>
-		<url>https://github.com/p2-inc/keycloak-event-metrics/issues</url>
-	</issueManagement>
-	<ciManagement>
-		<system>github</system>
-		<url>https://github.com/p2-inc/keycloak-event-metrics/actions</url>
-	</ciManagement>
+  <developers>
+    <developer>
+      <id>sschnabe</id>
+      <name>Stephan Schnabel</name>
+      <url>https://github.com/sschnabe</url>
+      <email>stephan@grayc.de</email>
+      <organization>GrayC GmbH</organization>
+      <organizationUrl>https://grayc.de</organizationUrl>
+      <timezone>Europe/Berlin</timezone>
+    </developer>
+    <developer>
+      <id>p2-inc</id>
+      <name>Phase Two, Inc.</name>
+      <url>https://github.com/p2-inc</url>
+      <email>support@phasetwo.io</email>
+    </developer>
+  </developers>
 
+  <scm>
+    <url>https://github.com/p2-inc/keycloak-event-metrics</url>
+    <connection>scm:git:git@github.com:p2-inc/keycloak-event-metrics.git</connection>
+    <tag>HEAD</tag>
+  </scm>
+
+  <!-- keep below merged -->
+  
 	<properties>
+	  <ossrh.url>https://s01.oss.sonatype.org</ossrh.url>
 
 		<!-- ===================================================================== -->
 		<!-- =============================== Build =============================== -->
